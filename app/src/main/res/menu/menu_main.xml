@@ -1,0 +1,29 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.example.bazinga.samplelist.MainActivity">
+    <item
+        android:id="@+id/action_settings"
+        android:orderInCategory="100"
+        android:title="@string/action_settings"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/action_activity_a"
+        android:orderInCategory="200"
+        android:title="Activity A"
+        app:showAsAction="collapseActionView">
+        <menu>
+            <item
+                android:id="@+id/action_activity_c"
+                android:orderInCategory="300"
+                android:title="Activity C"
+                app:showAsAction="ifRoom" />
+        </menu>
+    </item>
+
+    <item
+        android:id="@+id/action_activity_b"
+        android:orderInCategory="300"
+        android:title="Activity B"
+        app:showAsAction="ifRoom" />
+</menu>

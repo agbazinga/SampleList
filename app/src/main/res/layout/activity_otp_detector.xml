@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/tv_otp_description"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="50dp"
+        android:text="Waiting for OTP detection" />
+
+    <EditText
+        android:id="@+id/et_otp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tv_otp_description"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="25dp"
+        android:hint="000000"
+        android:inputType="number"
+        android:maxLength="6"
+        android:textColorHint="#00FFFFFF" />
+
+    <com.github.glomadrian.codeinputlib.CodeInput
+        android:id="@+id/otp_code_input"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/et_otp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp"
+        android:foregroundGravity="center"
+        app:codes="4"
+        app:hint_color="#77ce9d"
+        app:hint_text="Pin code"
+        app:text_color="#b12eff"
+        app:underline_color="#457ad1"
+        app:underline_selected_color="#9e1ace" />
+
+    <com.example.bazinga.samplelist.ui.views.PinEntryView
+        android:id="@+id/pin_entry_simple"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/otp_code_input"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp"
+        android:visibility="visible"
+        app:accentType="all"
+        app:accentWidth="3dp"
+        app:digitBackground="@android:color/holo_red_light"
+        app:digitElevation="10dp"
+        app:mask=""
+        app:pinAccentColor="@color/colorPrimary" />
+</RelativeLayout>

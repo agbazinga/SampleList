@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <Preference
+        android:key="fab_animation_activity"
+        android:title="Fab Animations Demo">
+        <intent
+            android:action="android.intent.action.MAIN"
+            android:targetClass="com.example.bazinga.samplelist.ui.activity.FabAnimationDemoActivity"
+            android:targetPackage="com.example.bazinga.samplelist" />
+    </Preference>
+
+</PreferenceScreen>
