@@ -8,6 +8,6 @@
     <color name="fragment_two_bg_color">#FFAFF2</color>
     <color name="fragment_three_bg_color">#CE93D8</color>
 
-    <color name="tab_selected_color">#FAFAFA</color>
-    <color name="tab_unselected_color">#B4FAFAFA</color>
+    <color name="tab_selected_color">#CE93D8</color>
+    <color name="tab_unselected_color">#CE93D8</color>
 </resources>

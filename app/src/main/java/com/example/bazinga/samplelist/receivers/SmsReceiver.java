@@ -8,12 +8,14 @@ import android.os.Bundle;
 import android.provider.Telephony;
 import android.telephony.SmsMessage;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.example.bazinga.samplelist.callbacks.SmsListenerController;
 import com.example.bazinga.samplelist.ui.activity.SingleInstanceActivity;
 import com.example.bazinga.samplelist.ui.activity.SingleTaskActivity;
 import com.example.bazinga.samplelist.ui.activity.SingleTopActivity;
 import com.example.bazinga.samplelist.ui.activity.StandardActivity;
+import com.example.bazinga.samplelist.utils.AppUtils;
 
 /**
  * Created by Bazinga on 5/8/2017.
@@ -22,6 +24,7 @@ import com.example.bazinga.samplelist.ui.activity.StandardActivity;
 public class SmsReceiver extends BroadcastReceiver {
 
     private final String ACTION_LAUNCH_MODE = "com.example.bazinga.intent.ACTION_LAUNCH_MODE";
+    private final String ACTION_UPDATE_TILE = "com.example.bazinga.intent.ACTION_UPDATE_TILE";
 
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -75,6 +78,22 @@ public class SmsReceiver extends BroadcastReceiver {
                     break;
 
             }
+        } else if (ACTION_UPDATE_TILE.equals(intent.getAction())) {
+            boolean state = intent.getBooleanExtra("state", true);
+            String tileClassName = ".qs.tile.CustomTile";
+
+            Log.d("ABHI", "update tile action , state " + state);
+            AppUtils.setComponentState(context, tileClassName, state);
+        } else if (Intent.ACTION_BOOT_COMPLETED.equals(intent.getAction())) {
+            Toast.makeText(context, "boot complete sample app", Toast.LENGTH_SHORT).show();
+            String tileClassName = ".qs.tile.CustomTile";
+            String pkgName = context.getPackageName();
+
+            if (!AppUtils.isComponentEnabled(context, pkgName, tileClassName)) {
+                Log.d("ABHI", "enabling tile ");
+                AppUtils.setComponentState(context, tileClassName, true);
+            }
+
         }
 
     }

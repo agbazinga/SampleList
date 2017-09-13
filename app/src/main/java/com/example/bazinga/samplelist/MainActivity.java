@@ -1,8 +1,12 @@
 package com.example.bazinga.samplelist;
 
 import android.content.Intent;
+import android.media.session.MediaSession;
+import android.media.session.PlaybackState;
 import android.os.Bundle;
 import android.os.PersistableBundle;
+import android.provider.Settings;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -21,6 +25,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     Button clickButton;
 
+    private MediaSession mediaSession;
+
     private static final String TAG = "MainActivity";
 
     @Override
@@ -37,14 +43,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             public void onClick(View view) {
                 /*Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();*/
-                Intent intent = new Intent(MainActivity.this, AnimationTestActivity.class);
-                startActivity(intent);
+
+                Settings.System.putInt(getContentResolver(), Settings.System.VIBRATE_WHEN_RINGING, 0);
+                //  Intent intent = new Intent(MainActivity.this, AnimationTestActivity.class);
+                // startActivity(intent);
 
             }
         });
 
         clickButton = (Button) findViewById(R.id.sample_button);
         clickButton.setOnClickListener(this);
+
+        setMediaSession();
+
     }
 
     @Override
@@ -103,6 +114,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     protected void onResume() {
         super.onResume();
+        mediaSession.setActive(true);
         Log.d(TAG, "onResume");
     }
 
@@ -121,6 +133,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     protected void onPause() {
         super.onPause();
+        mediaSession.setActive(false);
         Log.d(TAG, "onPause");
     }
 
@@ -140,6 +153,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected void onDestroy() {
         super.onDestroy();
         Log.d(TAG, "onDestroy");
+        release();
     }
 
     @Override
@@ -152,6 +166,32 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onSaveInstanceState(Bundle outState, PersistableBundle outPersistentState) {
         Log.d(TAG, "onSaveInstanceState");
         super.onSaveInstanceState(outState, outPersistentState);
+    }
+
+    private void setMediaSession() {
+        mediaSession = new MediaSession(this, "SampleList");
+        mediaSession.setActive(true);
+        mediaSession.setFlags(MediaSession.FLAG_HANDLES_MEDIA_BUTTONS | MediaSession.FLAG_HANDLES_TRANSPORT_CONTROLS);
+        mediaSession.setCallback(new MediaSessionCallback());
+        PlaybackState.Builder mMediaSessionBuilder = new PlaybackState.Builder();
+        mMediaSessionBuilder.setState(PlaybackState.STATE_PLAYING, 0, 0);
+        mediaSession.setPlaybackState(mMediaSessionBuilder.build());
+
+    }
+
+    private void release() {
+        if (mediaSession != null) {
+            mediaSession.release();
+        }
+    }
+
+    private class MediaSessionCallback extends MediaSession.Callback {
+        public boolean onMediaButtonEvent(Intent mediaButtonIntent) {
+            Log.d(TAG, "MediaSessionCallback");
+            //Toast.makeText(mContext,"MediaSessionCallback",Toast.LENGTH_LONG).show();
+            return true;
+        }
+
     }
 }
 

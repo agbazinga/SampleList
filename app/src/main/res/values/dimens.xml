@@ -6,4 +6,10 @@
     <dimen name="app_list_item_padding">8dp</dimen>
     <dimen name="app_list_icon_margin_end">0dp</dimen>
     <dimen name="app_list_item_textsize">15dp</dimen>
+
+    <!-- SProtect Dimens -->
+    <dimen name="custom_preference_divider_height">29dp</dimen>
+    <dimen name="custom_preference_divider_width">1dp</dimen>
+    <dimen name="custom_preference_switch_margin_start">14dp</dimen>
+    <dimen name="custom_preference_switch_margin_end">16dp</dimen>
 </resources>
