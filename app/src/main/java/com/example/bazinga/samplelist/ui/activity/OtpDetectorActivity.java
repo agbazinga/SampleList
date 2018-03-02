@@ -48,6 +48,8 @@ public class OtpDetectorActivity extends Activity implements SmsListener {
 
     private NotificationManager mNotificationManager;
 
+    private CountDownTimer mCountDownTimer;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -72,16 +74,8 @@ public class OtpDetectorActivity extends Activity implements SmsListener {
         mDpiOne.setText("WP:" + mDisplayMetrics.widthPixels + " HP:" + mDisplayMetrics.heightPixels);
         mDpiTwo.setText("Density:" + mDisplayMetrics.density + " ScaledDensity:" + mDisplayMetrics.scaledDensity);
         mDpiThree.setText("Density DPI " + densityDpi);
-        new CountDownTimer(30000, 1000) {
 
-            public void onTick(long millisUntilFinished) {
-                textDescription.setText("seconds remaining: " + millisUntilFinished / 1000);
-            }
-
-            public void onFinish() {
-                textDescription.setText("done!");
-            }
-        }.start();
+        startCountDownTimer();
 
         mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         if (mNotificationManager.isNotificationPolicyAccessGranted()) {
@@ -102,6 +96,21 @@ public class OtpDetectorActivity extends Activity implements SmsListener {
     protected void onResume() {
         super.onResume();
         pinEntryView.setText("4444");
+
+    }
+
+    private void startCountDownTimer() {
+        mCountDownTimer = new CountDownTimer(5000, 1000) {
+
+            public void onTick(long millisUntilFinished) {
+                textDescription.setText("seconds remaining: " + millisUntilFinished / 1000);
+            }
+
+            public void onFinish() {
+                textDescription.setText("done!");
+            }
+        };
+        mCountDownTimer.start();
 
     }
 

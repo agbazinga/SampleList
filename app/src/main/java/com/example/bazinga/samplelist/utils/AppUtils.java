@@ -11,11 +11,14 @@ import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.view.View;
 
-import com.example.bazinga.samplelist.model.AppInfo;
+import com.example.bazinga.samplelist.model.AppListData;
 
+import java.text.Collator;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * Created by Bazinga on 5/1/2017.
@@ -23,8 +26,8 @@ import java.util.List;
 
 public class AppUtils {
 
-    public static List<AppInfo> getLauncherApps(Context context) {
-        List<AppInfo> launcherApps = new ArrayList<>();
+    public static List<AppListData> getLauncherApps(Context context, boolean hideSystemApps) {
+        List<AppListData> launcherApps = new ArrayList<>();
         PackageManager mPM = context.getPackageManager();
         Intent launcherIntent = new Intent(Intent.ACTION_MAIN);
         launcherIntent.addCategory(Intent.CATEGORY_LAUNCHER);
@@ -33,16 +36,66 @@ public class AppUtils {
 
         for (ResolveInfo resolveInfo : resolveInfoList) {
             ActivityInfo activityInfo = resolveInfo.activityInfo;
-            AppInfo appInfo = new AppInfo();
+            ApplicationInfo applicationInfo = null;
+            try {
+                applicationInfo = mPM.getApplicationInfo(activityInfo.packageName, 0);
+            } catch (PackageManager.NameNotFoundException e) {
+                e.printStackTrace();
+            }
+            AppListData appInfo = new AppListData();
             appInfo.appName = activityInfo.loadLabel(mPM).toString();
             appInfo.appSummary = activityInfo.packageName;
             appInfo.appIcon = activityInfo.loadIcon(mPM);
             appInfo.appActivity = activityInfo.name;
-            launcherApps.add(appInfo);
+            // default install location
+            appInfo.installLocation = "INSTALL_LOCATION_INTERNAL_ONLY";
+
+            PackageInfo packageInfo = getPackageInfo(context, activityInfo.packageName);
+
+            if (null != packageInfo) {
+                switch (packageInfo.installLocation) {
+                    case PackageInfo.INSTALL_LOCATION_AUTO:
+                        appInfo.installLocation = "INSTALL_LOCATION_AUTO";
+                        break;
+                    case PackageInfo.INSTALL_LOCATION_INTERNAL_ONLY:
+                        appInfo.installLocation = "INSTALL_LOCATION_INTERNAL_ONLY";
+                        break;
+                    case PackageInfo.INSTALL_LOCATION_PREFER_EXTERNAL:
+                        appInfo.installLocation = "INSTALL_LOCATION_PREFER_EXTERNAL";
+                        break;
+
+                }
+            }
+            if (hideSystemApps && applicationInfo != null) {
+                if ((ApplicationInfo.FLAG_SYSTEM & applicationInfo.flags) == 0) {
+                    // add only if not system app.
+                    launcherApps.add(appInfo);
+                }
+            } else {
+                launcherApps.add(appInfo);
+            }
+
         }
+        sortList(launcherApps);
         return launcherApps;
     }
 
+    private static void sortList(List<AppListData> mAppList) {
+        final Collator collator = Collator.getInstance(Locale.getDefault());
+        Comparator<AppListData> comparator = new Comparator<AppListData>() {
+            @Override
+            public int compare(AppListData lhs, AppListData rhs) {
+                int result = 0;
+                int ret;
+                ret = collator.compare(lhs.appName, rhs.appName);
+                if (ret != 0) {
+                    result = ret > 0 ? 1 : -1;
+                }
+                return result;
+            }
+        };
+        Collections.sort(mAppList, comparator);
+    }
 
     public static void setComponentState(Context context, String className, boolean state) {
         PackageManager pm = context.getPackageManager();
@@ -73,6 +126,7 @@ public class AppUtils {
                             | PackageManager.GET_PROVIDERS
                             | PackageManager.MATCH_DISABLED_COMPONENTS);
 
+
                     List<ComponentInfo> components = new ArrayList<>();
                     if (packageInfo.activities != null)
                         Collections.addAll(components, packageInfo.activities);
@@ -98,5 +152,17 @@ public class AppUtils {
 
     public static boolean isRTL(Context context) {
         return context.getResources().getConfiguration().getLayoutDirection() == View.LAYOUT_DIRECTION_RTL;
+    }
+
+    public static PackageInfo getPackageInfo(Context context, String packageName) {
+        PackageInfo packageInfo = null;
+        PackageManager pm = context.getPackageManager();
+        try {
+            packageInfo = pm.getPackageInfo(packageName, 0);
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        return packageInfo;
     }
 }

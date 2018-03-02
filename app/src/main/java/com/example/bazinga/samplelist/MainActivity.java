@@ -1,6 +1,14 @@
 package com.example.bazinga.samplelist;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
+import android.content.res.Configuration;
+import android.media.MediaPlayer;
 import android.media.session.MediaSession;
 import android.media.session.PlaybackState;
 import android.os.Bundle;
@@ -15,19 +23,39 @@ import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Button;
+import android.widget.Toast;
 
 import com.example.bazinga.samplelist.ui.activity.AnimationTestActivity;
 import com.example.bazinga.samplelist.ui.activity.AppListActivity;
 import com.example.bazinga.samplelist.ui.activity.OtpDetectorActivity;
 import com.example.bazinga.samplelist.ui.activity.SettingsActivity;
 
+import java.util.List;
+
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
     Button clickButton;
 
+    PackageManager packageManager;
     private MediaSession mediaSession;
 
-    private static final String TAG = "MainActivity";
+    private static final String TAG = "TESLA";
+
+    private static final String KEY_SCREEN_ORIENTATION = "key_screen_orientation";
+
+    private int mRotateState;
+
+    private static final String ACTION_CUSTOM_DOWNLOAD = "com.example.bazinga.intent.ACTION_CUSTOM_DOWNLOAD";
+    private CustomBroadcastReceiver mCustomBroadcastReceiver;
+
+    private ViewType currentViewType = ViewType.UNKNOWN;
+
+    private enum ViewType {
+        UNKNOWN,
+        DOWNLOAD_SHOW_CARD,
+        DOWNLOAD_PROGRESS,
+        DOWNLOAD_COMPLETE
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,6 +65,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        mCustomBroadcastReceiver = new CustomBroadcastReceiver();
+        registerCustomBroadcastReceiver();
+
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab_email);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -44,17 +75,36 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 /*Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();*/
 
-                Settings.System.putInt(getContentResolver(), Settings.System.VIBRATE_WHEN_RINGING, 0);
+                //  Settings.System.putInt(getContentResolver(), Settings.System.VIBRATE_WHEN_RINGING, 0);
                 //  Intent intent = new Intent(MainActivity.this, AnimationTestActivity.class);
                 // startActivity(intent);
 
+                setViewType(ViewType.DOWNLOAD_SHOW_CARD);
             }
         });
+
+        packageManager = getPackageManager();
 
         clickButton = (Button) findViewById(R.id.sample_button);
         clickButton.setOnClickListener(this);
 
         setMediaSession();
+        playSilentAudio();
+        Log.d(TAG, "Default Rotate State : " + mRotateState);
+
+        if (savedInstanceState != null) {
+            mRotateState = savedInstanceState.getInt(KEY_SCREEN_ORIENTATION);
+            Log.d(TAG, "OnCreate savedInstanceState Rotate State : " + mRotateState);
+
+            int currentOrientation = getScreenOrientation();
+
+            Log.d(TAG, "current screen orientation : " + currentOrientation);
+
+            if (mRotateState != currentOrientation) {
+                mRotateState = currentOrientation;
+                Toast.makeText(this, "Orientation Change Detected ", Toast.LENGTH_SHORT).show();
+            }
+        }
 
     }
 
@@ -89,13 +139,27 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
+    private void registerCustomBroadcastReceiver() {
+        if (null != mCustomBroadcastReceiver) {
+            mCustomBroadcastReceiver.register();
+        }
+    }
+
+    private void unRegisterCustomBroadcastReceiver() {
+        if (null != mCustomBroadcastReceiver) {
+            mCustomBroadcastReceiver.unRegister();
+        }
+    }
+
     @Override
     public void onClick(View v) {
         int id = v.getId();
         switch (id) {
             case R.id.sample_button:
                 //Toast.makeText(this, "Button Clicked", Toast.LENGTH_SHORT).show();
-                launchAppListActivity();
+                 launchAppListActivity();
+                setViewType(ViewType.DOWNLOAD_COMPLETE);
+
                 break;
         }
     }
@@ -153,6 +217,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected void onDestroy() {
         super.onDestroy();
         Log.d(TAG, "onDestroy");
+        unRegisterCustomBroadcastReceiver();
         release();
     }
 
@@ -163,15 +228,22 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     @Override
-    public void onSaveInstanceState(Bundle outState, PersistableBundle outPersistentState) {
+    protected void onSaveInstanceState(Bundle outState) {
+        Log.d(TAG, "onSaveInstanceState : mRotateState : " + mRotateState);
+        outState.putInt(KEY_SCREEN_ORIENTATION, mRotateState);
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
         Log.d(TAG, "onSaveInstanceState");
-        super.onSaveInstanceState(outState, outPersistentState);
+        super.onConfigurationChanged(newConfig);
     }
 
     private void setMediaSession() {
         mediaSession = new MediaSession(this, "SampleList");
         mediaSession.setActive(true);
-        mediaSession.setFlags(MediaSession.FLAG_HANDLES_MEDIA_BUTTONS | MediaSession.FLAG_HANDLES_TRANSPORT_CONTROLS);
+        // mediaSession.setFlags(MediaSession.FLAG_HANDLES_MEDIA_BUTTONS | MediaSession.FLAG_HANDLES_TRANSPORT_CONTROLS);
         mediaSession.setCallback(new MediaSessionCallback());
         PlaybackState.Builder mMediaSessionBuilder = new PlaybackState.Builder();
         mMediaSessionBuilder.setState(PlaybackState.STATE_PLAYING, 0, 0);
@@ -185,6 +257,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
+    private void playSilentAudio() {
+        final MediaPlayer mMediaPlayer;
+        mMediaPlayer = MediaPlayer.create(this, R.raw.blan_audio_250ms);
+        mMediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+            @Override
+            public void onCompletion(MediaPlayer mediaPlayer) {
+                mMediaPlayer.release();
+            }
+        });
+        mMediaPlayer.start();
+    }
+
     private class MediaSessionCallback extends MediaSession.Callback {
         public boolean onMediaButtonEvent(Intent mediaButtonIntent) {
             Log.d(TAG, "MediaSessionCallback");
@@ -192,6 +276,64 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             return true;
         }
 
+
+    }
+
+    private int getScreenOrientation() {
+        return getResources().getConfiguration().orientation;
+    }
+
+    private class CustomBroadcastReceiver extends BroadcastReceiver {
+
+        IntentFilter intentFilter;
+        boolean isRegistered;
+
+        private void register() {
+            if (!isRegistered) {
+                intentFilter = new IntentFilter();
+                intentFilter.addAction(ACTION_CUSTOM_DOWNLOAD);
+                registerReceiver(this, intentFilter);
+                isRegistered = true;
+            }
+        }
+
+        private void unRegister() {
+            if (isRegistered) {
+                unregisterReceiver(this);
+                isRegistered = false;
+            }
+        }
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            final String action = intent.getAction();
+
+            Intent i = new Intent();
+            i.addCategory(Intent.CATEGORY_LAUNCHER);
+            i.setPackage("com.samsung.android.contacts");
+
+            List<ResolveInfo> resolveInfos = packageManager.queryIntentActivities(i, 0);
+
+            for (ResolveInfo ri : resolveInfos) {
+                Log.d("BUXX", "Activity Name : " + ri.activityInfo.name);
+            }
+
+
+            if (action.equals(ACTION_CUSTOM_DOWNLOAD)) {
+                currentViewType.name();
+                Log.d("BUXX", "currentViewType : " + currentViewType
+                        + " : currentType.name() : " + currentViewType.name()
+                        + " : currentType.ordinal() : " + currentViewType.ordinal());
+            }
+        }
+    }
+
+    private ViewType getViewType() {
+        return currentViewType;
+    }
+
+    private void setViewType(ViewType newViewType) {
+        currentViewType = newViewType;
     }
 }
 

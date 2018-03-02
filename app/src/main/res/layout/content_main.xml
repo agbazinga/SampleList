@@ -18,6 +18,22 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="70dp"
+        android:background="#252525"
+        app:layout_constraintBottom_toTopOf="@id/bottom_bar_container">
+
+        <ImageView
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_gravity="center"
+
+            android:src="@drawable/ic_setting_grid_app_lock" />
+
+    </FrameLayout>
+
+
     <LinearLayout
         android:id="@+id/bottom_bar_container"
         android:layout_width="368dp"
