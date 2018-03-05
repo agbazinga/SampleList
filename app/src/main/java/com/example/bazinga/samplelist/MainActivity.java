@@ -156,8 +156,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         int id = v.getId();
         switch (id) {
             case R.id.sample_button:
+                recreate();
                 //Toast.makeText(this, "Button Clicked", Toast.LENGTH_SHORT).show();
-                 launchAppListActivity();
+                //launchAppListActivity();
                 setViewType(ViewType.DOWNLOAD_COMPLETE);
 
                 break;
