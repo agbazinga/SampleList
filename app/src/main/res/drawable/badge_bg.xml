@@ -4,8 +4,8 @@
 
     <stroke
         android:width="0dp"
-        android:color="@color/tab_item_color_state" />
-    <solid android:color="@color/tab_item_color_state" />
+        android:color="?android:attr/textColorPrimary" />
+    <solid android:color="@color/badge_color" />
     <corners android:radius="10dp" />
     <padding
         android:bottom="2dp"

@@ -9,12 +9,15 @@ import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v7.app.AppCompatDelegate;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Menu;
@@ -26,6 +29,7 @@ import android.widget.Toast;
 import com.example.bazinga.samplelist.R;
 import com.example.bazinga.samplelist.callbacks.SmsListener;
 import com.example.bazinga.samplelist.callbacks.SmsListenerController;
+import com.example.bazinga.samplelist.ui.fragment.SettingsFragment;
 import com.example.bazinga.samplelist.ui.views.PinEntryView;
 import com.github.glomadrian.codeinputlib.CodeInput;
 
@@ -33,8 +37,9 @@ import com.github.glomadrian.codeinputlib.CodeInput;
  * Created by Bazinga on 5/8/2017.
  */
 
-public class OtpDetectorActivity extends Activity implements SmsListener {
+public class OtpDetectorActivity extends Activity implements SmsListener, SharedPreferences.OnSharedPreferenceChangeListener {
 
+    public static final String TAG = "OtpDetectorActivity";
     private EditText otpEditText;
     private TextView textDescription;
     public static int PERMISSION_REQUEST_CODE = 1000;
@@ -52,6 +57,18 @@ public class OtpDetectorActivity extends Activity implements SmsListener {
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
+
+        boolean isDarkTheme = PreferenceManager.getDefaultSharedPreferences(this).getBoolean(SettingsFragment.KEY_CHANGE_THEME, false);
+        Log.d(TAG, "isDarkTheme : " + isDarkTheme);
+        Log.d(TAG, "AppCompatDelegate.getDefaultNightMode() : " + AppCompatDelegate.getDefaultNightMode());
+        if ((isDarkTheme /*&& AppCompatDelegate.getDefaultNightMode() != AppCompatDelegate.MODE_NIGHT_YES*/)) {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+            // recreate();
+        } else if ((!isDarkTheme /*&& AppCompatDelegate.getDefaultNightMode() != AppCompatDelegate.MODE_NIGHT_NO*/)) {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+            //recreate();
+        }
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_otp_detector);
         String permissionsRequired[] = {Manifest.permission.READ_CONTACTS, Manifest.permission.READ_SMS};
@@ -178,6 +195,13 @@ public class OtpDetectorActivity extends Activity implements SmsListener {
             }
         } else {
             Toast.makeText(this, "Required permissions granted", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    @Override
+    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+        if (key.equals(SettingsFragment.KEY_CHANGE_THEME)) {
+            recreate();
         }
     }
 }

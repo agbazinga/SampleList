@@ -36,4 +36,9 @@
         <!-- Only draw accent when View has focus -->
         <attr name="accentRequiresFocus" format="boolean" />
     </declare-styleable>
+
+    <declare-styleable name="CustomTheme">
+        <attr name="windowBackgroundColor" format="color" />
+        <attr name="cardBackgroundColor" format="color" />
+    </declare-styleable>
 </resources>

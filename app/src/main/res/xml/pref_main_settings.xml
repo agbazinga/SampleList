@@ -10,4 +10,9 @@
             android:targetPackage="com.example.bazinga.samplelist" />
     </Preference>
 
+    <SwitchPreference
+        android:defaultValue="false"
+        android:key="key_change_theme"
+        android:title="Dark Theme"></SwitchPreference>
+
 </PreferenceScreen>

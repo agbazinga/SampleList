@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
@@ -13,10 +14,12 @@ import android.media.session.MediaSession;
 import android.media.session.PlaybackState;
 import android.os.Bundle;
 import android.os.PersistableBundle;
+import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.app.AppCompatDelegate;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
@@ -29,10 +32,11 @@ import com.example.bazinga.samplelist.ui.activity.AnimationTestActivity;
 import com.example.bazinga.samplelist.ui.activity.AppListActivity;
 import com.example.bazinga.samplelist.ui.activity.OtpDetectorActivity;
 import com.example.bazinga.samplelist.ui.activity.SettingsActivity;
+import com.example.bazinga.samplelist.ui.fragment.SettingsFragment;
 
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener {
+public class MainActivity extends AppCompatActivity implements View.OnClickListener, SharedPreferences.OnSharedPreferenceChangeListener {
 
     Button clickButton;
 
@@ -50,6 +54,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private ViewType currentViewType = ViewType.UNKNOWN;
 
+    private SharedPreferences prefs;
+
+    @Override
+    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+        if (key.equals(SettingsFragment.KEY_CHANGE_THEME)) {
+            recreate();
+        }
+    }
+
     private enum ViewType {
         UNKNOWN,
         DOWNLOAD_SHOW_CARD,
@@ -59,6 +72,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        if (null == savedInstanceState) {
+            boolean isDarkTheme = PreferenceManager.getDefaultSharedPreferences(this).getBoolean(SettingsFragment.KEY_CHANGE_THEME, false);
+            if ((isDarkTheme && AppCompatDelegate.getDefaultNightMode() != AppCompatDelegate.MODE_NIGHT_YES)) {
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+                // recreate();
+            } else if ((!isDarkTheme && AppCompatDelegate.getDefaultNightMode() != AppCompatDelegate.MODE_NIGHT_NO)) {
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+                //recreate();
+            }
+        }
         super.onCreate(savedInstanceState);
         Log.d(TAG, "onCreate");
         setContentView(R.layout.activity_main);
@@ -105,6 +128,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 Toast.makeText(this, "Orientation Change Detected ", Toast.LENGTH_SHORT).show();
             }
         }
+
+        prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        prefs.registerOnSharedPreferenceChangeListener(this);
 
     }
 
@@ -220,6 +246,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         Log.d(TAG, "onDestroy");
         unRegisterCustomBroadcastReceiver();
         release();
+        prefs.unregisterOnSharedPreferenceChangeListener(this);
     }
 
     @Override

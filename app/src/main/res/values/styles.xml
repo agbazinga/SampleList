@@ -13,14 +13,27 @@
         <item name="windowNoTitle">true</item>
     </style>
 
+    <style name="AppThemeDark" parent="Theme.AppCompat">
+        <item name="colorAccent">@color/colorAccent</item>
+    </style>
+
+    <style name="AppThemeDark.NoActionBar" parent="AppThemeDark">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
     <style name="DefaultTheme" parent="android:style/Theme.DeviceDefault.Light">
         <item name="android:fastScrollStyle">@style/FastScroll</item>
-        <item name="android:fastScrollPreviewBackgroundLeft">@drawable/fast_scroll_drawable_background</item>
-        <item name="android:fastScrollPreviewBackgroundRight">@drawable/fast_scroll_drawable_background</item>
+        <item name="android:fastScrollPreviewBackgroundLeft">
+            @drawable/fast_scroll_drawable_background
+        </item>
+        <item name="android:fastScrollPreviewBackgroundRight">
+            @drawable/fast_scroll_drawable_background
+        </item>
     </style>
 
     <style name="FastScroll" parent="android:Widget.DeviceDefault.Light.FastScroll">
