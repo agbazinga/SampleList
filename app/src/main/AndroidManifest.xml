@@ -6,10 +6,8 @@
     <uses-permission android:name="android.permission.READ_SMS" />
     <uses-permission android:name="android.permission.RECEIVE_SMS" />
     <uses-permission android:name="android.permission.READ_CONTACTS" />
-
     <uses-permission android:name="android.permission.ACCESS_NOTIFICATION_POLICY" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
-
     <uses-permission android:name="android.permission.WRITE_SETTINGS" />
 
     <application
@@ -55,6 +53,7 @@
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".ui.activity.SettingsActivity"
+            android:launchMode="singleInstance"
             android:label="@string/title_activity_settings" />
         <activity
             android:name=".ui.activity.FabAnimationDemoActivity"
@@ -77,18 +76,23 @@
             android:name=".ui.activity.SingleInstanceActivity"
             android:label="@string/title_activity_single_instance"
             android:launchMode="singleInstance"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
 
         <service
             android:name=".qs.tile.CustomTile"
             android:icon="@drawable/ic_notifications_black_24dp"
             android:label="CustomTile"
-            android:permission="android.permission.BIND_QUICK_SETTINGS_TILE">>
+            android:permission="android.permission.BIND_QUICK_SETTINGS_TILE">
+            >
             <intent-filter>
                 <action android:name="android.service.quicksettings.action.QS_TILE" />
             </intent-filter>
-
         </service>
+
+        <activity
+            android:name=".ui.activity.AsyncRetainActivity"
+            android:label="@string/title_activity_async_retain"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>

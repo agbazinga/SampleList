@@ -185,6 +185,8 @@ public class AppListActivity extends ListActivity {
         @Override
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
+            if (null != mAppList)
+                Log.d("ABHI", "mAppList.size() : " + mAppList.size());
             mAppListAdapter.setList(mAppList);
             setListAdapter(mAppListAdapter);
             mAppListAdapter.notifyDataSetChanged();

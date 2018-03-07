@@ -18,7 +18,7 @@ import com.example.bazinga.samplelist.R;
 
 import java.util.ArrayList;
 
-public class AnimationTestActivity extends AppCompatActivity {
+public class AnimationTestActivity extends BaseAppCompatActivity {
 
     private EditText inputEditText;
 

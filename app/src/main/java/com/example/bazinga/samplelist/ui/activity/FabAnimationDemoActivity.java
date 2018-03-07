@@ -24,7 +24,7 @@ import com.example.bazinga.samplelist.ui.fragment.FragmentOne;
  * Created by Bazinga on 5/27/2017.
  */
 
-public class FabAnimationDemoActivity extends AppCompatActivity implements FragmentOne.OnFragmentInteractionListener, View.OnClickListener {
+public class FabAnimationDemoActivity extends BaseAppCompatActivity implements FragmentOne.OnFragmentInteractionListener, View.OnClickListener {
 
     private static int NUM_PAGES = 3;
 

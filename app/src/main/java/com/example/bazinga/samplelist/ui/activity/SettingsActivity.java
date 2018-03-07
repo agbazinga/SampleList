@@ -10,7 +10,7 @@ import android.widget.Toast;
 import com.example.bazinga.samplelist.R;
 import com.example.bazinga.samplelist.ui.fragment.SettingsFragment;
 
-public class SettingsActivity extends AppCompatActivity implements SettingsFragment.OnFragmentInteractionListener {
+public class SettingsActivity extends BaseAppCompatActivity implements SettingsFragment.OnFragmentInteractionListener {
 
     private Toolbar mToolbar;
 

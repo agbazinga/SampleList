@@ -10,6 +10,24 @@
             android:targetPackage="com.example.bazinga.samplelist" />
     </Preference>
 
+    <Preference
+        android:key="async_retain_activity"
+        android:title="Async Retain Activity">
+        <intent
+            android:action="android.intent.action.MAIN"
+            android:targetClass="com.example.bazinga.samplelist.ui.activity.AsyncRetainActivity"
+            android:targetPackage="com.example.bazinga.samplelist" />
+    </Preference>
+
+    <Preference
+        android:key="async_retain_activity"
+        android:title="Otp Detector Activity">
+        <intent
+            android:action="android.intent.action.MAIN"
+            android:targetClass="com.example.bazinga.samplelist.ui.activity.OtpDetectorActivity"
+            android:targetPackage="com.example.bazinga.samplelist" />
+    </Preference>
+
     <SwitchPreference
         android:defaultValue="false"
         android:key="key_change_theme"

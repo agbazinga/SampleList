@@ -9,7 +9,7 @@ import android.view.View;
 
 import com.example.bazinga.samplelist.R;
 
-public class SingleInstanceActivity extends AppCompatActivity {
+public class SingleInstanceActivity extends BaseAppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

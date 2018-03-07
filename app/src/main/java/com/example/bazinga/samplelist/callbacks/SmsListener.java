@@ -5,5 +5,5 @@ package com.example.bazinga.samplelist.callbacks;
  */
 
 public interface SmsListener {
-    public void onMessageReceived(String message);
+    void onMessageReceived(String message);
 }

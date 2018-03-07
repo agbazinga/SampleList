@@ -108,13 +108,14 @@ public class ListAdapter extends BaseAdapter implements SectionIndexer {
 
     @Override
     public Object[] getSections() {
-        return mSections;
+          return mSections;
     }
 
     @Override
     public int getPositionForSection(int sectionIndex) {
         Log.d(TAG, "getPositionForSection : sectionIndex : " + sectionIndex + " : getPositionForSection : " + mSections[sectionIndex].position);
-        return mSections[sectionIndex].position;
+     return 0;
+        //return mSections[sectionIndex].position;
     }
 
     @Override
@@ -193,6 +194,7 @@ public class ListAdapter extends BaseAdapter implements SectionIndexer {
 
     private void buildSections() {
         if (android.os.Build.VERSION.SDK_INT > Build.VERSION_CODES.N) {
+            mAppAndSectionList.clear();
             LocaleList localeList = null;
             localeList = mContext.getResources().getConfiguration().getLocales();
             if (localeList.size() == 0) {

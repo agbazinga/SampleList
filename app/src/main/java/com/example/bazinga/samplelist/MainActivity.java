@@ -4,8 +4,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.SharedPreferences;
-import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.content.res.Configuration;
@@ -13,55 +11,37 @@ import android.media.MediaPlayer;
 import android.media.session.MediaSession;
 import android.media.session.PlaybackState;
 import android.os.Bundle;
-import android.os.PersistableBundle;
-import android.preference.PreferenceManager;
-import android.provider.Settings;
-import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.app.AppCompatDelegate;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
-import com.example.bazinga.samplelist.ui.activity.AnimationTestActivity;
 import com.example.bazinga.samplelist.ui.activity.AppListActivity;
+import com.example.bazinga.samplelist.ui.activity.AsyncRetainActivity;
+import com.example.bazinga.samplelist.ui.activity.BaseAppCompatActivity;
 import com.example.bazinga.samplelist.ui.activity.OtpDetectorActivity;
 import com.example.bazinga.samplelist.ui.activity.SettingsActivity;
-import com.example.bazinga.samplelist.ui.fragment.SettingsFragment;
 
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener, SharedPreferences.OnSharedPreferenceChangeListener {
-
-    Button clickButton;
-
-    PackageManager packageManager;
-    private MediaSession mediaSession;
+public class MainActivity extends BaseAppCompatActivity implements View.OnClickListener {
 
     private static final String TAG = "TESLA";
 
     private static final String KEY_SCREEN_ORIENTATION = "key_screen_orientation";
-
-    private int mRotateState;
-
     private static final String ACTION_CUSTOM_DOWNLOAD = "com.example.bazinga.intent.ACTION_CUSTOM_DOWNLOAD";
-    private CustomBroadcastReceiver mCustomBroadcastReceiver;
 
+    private Button clickButton;
+    private CustomBroadcastReceiver mCustomBroadcastReceiver;
+    private MediaSession mediaSession;
+    private PackageManager packageManager;
     private ViewType currentViewType = ViewType.UNKNOWN;
 
-    private SharedPreferences prefs;
-
-    @Override
-    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-        if (key.equals(SettingsFragment.KEY_CHANGE_THEME)) {
-            recreate();
-        }
-    }
+    private int mRotateState;
 
     private enum ViewType {
         UNKNOWN,
@@ -72,16 +52,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        if (null == savedInstanceState) {
-            boolean isDarkTheme = PreferenceManager.getDefaultSharedPreferences(this).getBoolean(SettingsFragment.KEY_CHANGE_THEME, false);
-            if ((isDarkTheme && AppCompatDelegate.getDefaultNightMode() != AppCompatDelegate.MODE_NIGHT_YES)) {
-                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
-                // recreate();
-            } else if ((!isDarkTheme && AppCompatDelegate.getDefaultNightMode() != AppCompatDelegate.MODE_NIGHT_NO)) {
-                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
-                //recreate();
-            }
-        }
+        Log.d("ABHI", "MainActivity OnCreate ");
         super.onCreate(savedInstanceState);
         Log.d(TAG, "onCreate");
         setContentView(R.layout.activity_main);
@@ -129,40 +100,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
         }
 
-        prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        prefs.registerOnSharedPreferenceChangeListener(this);
-
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        Log.d(TAG, "onCreateOptionsMenu");
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        Log.d(TAG, "onOptionsItemSelected");
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        switch (id) {
-            case R.id.action_settings:
-                startActivity(new Intent(this, SettingsActivity.class));
-                return true;
-            case R.id.action_activity_a:
-                return true;
-            case R.id.action_activity_b:
-                startActivity(new Intent(this, OtpDetectorActivity.class));
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
     }
 
     private void registerCustomBroadcastReceiver() {
@@ -184,7 +121,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.sample_button:
                 recreate();
                 //Toast.makeText(this, "Button Clicked", Toast.LENGTH_SHORT).show();
-                //launchAppListActivity();
+                launchAppListActivity();
                 setViewType(ViewType.DOWNLOAD_COMPLETE);
 
                 break;
@@ -246,7 +183,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         Log.d(TAG, "onDestroy");
         unRegisterCustomBroadcastReceiver();
         release();
-        prefs.unregisterOnSharedPreferenceChangeListener(this);
     }
 
     @Override
@@ -271,7 +207,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private void setMediaSession() {
         mediaSession = new MediaSession(this, "SampleList");
         mediaSession.setActive(true);
-        // mediaSession.setFlags(MediaSession.FLAG_HANDLES_MEDIA_BUTTONS | MediaSession.FLAG_HANDLES_TRANSPORT_CONTROLS);
         mediaSession.setCallback(new MediaSessionCallback());
         PlaybackState.Builder mMediaSessionBuilder = new PlaybackState.Builder();
         mMediaSessionBuilder.setState(PlaybackState.STATE_PLAYING, 0, 0);
@@ -303,8 +238,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             //Toast.makeText(mContext,"MediaSessionCallback",Toast.LENGTH_LONG).show();
             return true;
         }
-
-
     }
 
     private int getScreenOrientation() {
