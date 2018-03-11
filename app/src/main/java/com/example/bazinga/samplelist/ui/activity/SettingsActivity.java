@@ -31,6 +31,11 @@ public class SettingsActivity extends BaseAppCompatActivity implements SettingsF
         return super.onKeyDown(keyCode, event);
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        return false;
+
+    }
 
     @Override
     public void onFragmentInteraction() {

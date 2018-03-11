@@ -17,7 +17,9 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.example.bazinga.samplelist.ui.activity.AppListActivity;
@@ -25,6 +27,7 @@ import com.example.bazinga.samplelist.ui.activity.AsyncRetainActivity;
 import com.example.bazinga.samplelist.ui.activity.BaseAppCompatActivity;
 import com.example.bazinga.samplelist.ui.activity.OtpDetectorActivity;
 import com.example.bazinga.samplelist.ui.activity.SettingsActivity;
+import com.example.bazinga.samplelist.utils.AppUtils;
 
 import java.util.List;
 
@@ -36,6 +39,7 @@ public class MainActivity extends BaseAppCompatActivity implements View.OnClickL
     private static final String ACTION_CUSTOM_DOWNLOAD = "com.example.bazinga.intent.ACTION_CUSTOM_DOWNLOAD";
 
     private Button clickButton;
+    private Spinner mSpinner;
     private CustomBroadcastReceiver mCustomBroadcastReceiver;
     private MediaSession mediaSession;
     private PackageManager packageManager;
@@ -49,6 +53,8 @@ public class MainActivity extends BaseAppCompatActivity implements View.OnClickL
         DOWNLOAD_PROGRESS,
         DOWNLOAD_COMPLETE
     }
+
+    private String[] launchMode = {"Standard", "Single Top", "Single Instance", "Single Task"};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -100,6 +106,9 @@ public class MainActivity extends BaseAppCompatActivity implements View.OnClickL
             }
         }
 
+        mSpinner = (Spinner) findViewById(R.id.launch_mode_spinner);
+        ArrayAdapter spinnerAdapter = new ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, launchMode);
+        mSpinner.setAdapter(spinnerAdapter);
     }
 
     private void registerCustomBroadcastReceiver() {
@@ -121,9 +130,9 @@ public class MainActivity extends BaseAppCompatActivity implements View.OnClickL
             case R.id.sample_button:
                 recreate();
                 //Toast.makeText(this, "Button Clicked", Toast.LENGTH_SHORT).show();
-                launchAppListActivity();
+                //launchAppListActivity();
                 setViewType(ViewType.DOWNLOAD_COMPLETE);
-
+                AppUtils.launchLaunchMode(this, mSpinner.getSelectedItemPosition() + 1);
                 break;
         }
     }

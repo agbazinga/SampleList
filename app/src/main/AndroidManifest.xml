@@ -53,15 +53,21 @@
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".ui.activity.SettingsActivity"
-            android:launchMode="singleInstance"
-            android:label="@string/title_activity_settings" />
+            android:label="@string/title_activity_settings"
+            android:launchMode="singleTask" />
         <activity
             android:name=".ui.activity.FabAnimationDemoActivity"
             android:label="@string/title_activity_fab_animation_demo" />
         <activity
             android:name=".ui.activity.StandardActivity"
+            android:exported="true"
             android:label="@string/title_activity_standard"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:theme="@style/AppTheme.NoActionBar">
+            <intent-filter>
+                <action android:name="com.example.bazinga.samplelist.action.LAUNCH" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
         <activity
             android:name=".ui.activity.SingleTopActivity"
             android:label="@string/title_activity_single_top"

@@ -12,6 +12,10 @@ import android.content.pm.ResolveInfo;
 import android.view.View;
 
 import com.example.bazinga.samplelist.model.AppListData;
+import com.example.bazinga.samplelist.ui.activity.SingleInstanceActivity;
+import com.example.bazinga.samplelist.ui.activity.SingleTaskActivity;
+import com.example.bazinga.samplelist.ui.activity.SingleTopActivity;
+import com.example.bazinga.samplelist.ui.activity.StandardActivity;
 
 import java.text.Collator;
 import java.util.ArrayList;
@@ -164,5 +168,26 @@ public class AppUtils {
         }
 
         return packageInfo;
+    }
+
+    public static void launchLaunchMode(Context context, int type) {
+        Intent intent = null;
+        switch (type) {
+            case Constants.LAUNCH_MODE_STANDARD:
+                intent = new Intent(context, StandardActivity.class);
+                break;
+            case Constants.LAUNCH_MODE_SINGLE_TOP:
+                intent = new Intent(context, SingleTopActivity.class);
+                break;
+            case Constants.LAUNCH_MODE_SINGLE_INSTANCE:
+                intent = new Intent(context, SingleInstanceActivity.class);
+                break;
+            case Constants.LAUNCH_MODE_SINGLE_TASK:
+                intent = new Intent(context, SingleTaskActivity.class);
+                break;
+        }
+        if (null != intent) {
+            context.startActivity(intent);
+        }
     }
 }

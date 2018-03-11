@@ -8,6 +8,15 @@
     tools:context="com.example.bazinga.samplelist.MainActivity"
     tools:showIn="@layout/activity_main">
 
+    <Spinner
+        android:id="@+id/launch_mode_spinner"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/applock_list_item_inner_padding"
+        app:layout_constraintBottom_toTopOf="@id/sample_button"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"></Spinner>
+
     <Button
         android:id="@+id/sample_button"
         android:layout_width="wrap_content"
