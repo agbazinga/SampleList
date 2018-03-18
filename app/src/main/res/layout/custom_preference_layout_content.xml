@@ -2,15 +2,17 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:paddingBottom="5dp"
-    android:paddingTop="5dp">
+    android:gravity="center_vertical"
+    android:minHeight="60dp"
+    android:background="@drawable/switch_background_ripple"
+    android:clickable="true"
+    android:focusable="true">
 
     <LinearLayout
         android:id="@+id/custom_preference_description_layout"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:gravity="center"
         android:orientation="vertical"
         android:paddingEnd="4dp">
 

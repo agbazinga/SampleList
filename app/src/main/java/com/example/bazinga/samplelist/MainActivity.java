@@ -1,5 +1,6 @@
 package com.example.bazinga.samplelist;
 
+import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -128,11 +129,10 @@ public class MainActivity extends BaseAppCompatActivity implements View.OnClickL
         int id = v.getId();
         switch (id) {
             case R.id.sample_button:
-                recreate();
                 //Toast.makeText(this, "Button Clicked", Toast.LENGTH_SHORT).show();
-                //launchAppListActivity();
-                setViewType(ViewType.DOWNLOAD_COMPLETE);
-                AppUtils.launchLaunchMode(this, mSpinner.getSelectedItemPosition() + 1);
+                launchAppListActivity();
+                //setViewType(ViewType.DOWNLOAD_COMPLETE);
+                //AppUtils.launchLaunchMode(this, mSpinner.getSelectedItemPosition() + 1);
                 break;
         }
     }
@@ -149,10 +149,9 @@ public class MainActivity extends BaseAppCompatActivity implements View.OnClickL
     }
 
     @Override
-    protected void onResume() {
+    protected void  onResume() {
         super.onResume();
         mediaSession.setActive(true);
-        Log.d(TAG, "onResume");
     }
 
     @Override

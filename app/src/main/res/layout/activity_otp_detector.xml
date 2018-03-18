@@ -230,7 +230,7 @@
         android:layout_above="@id/dpi_test_parent"
         android:background="#affa90"
         android:ellipsize="marquee"
-        android:maxLines="1"
+        android:singleLine="true"
         android:text="This is a sample test Width : 120dp" />
 
     <com.example.bazinga.samplelist.ui.views.CustomPreferenceLayout

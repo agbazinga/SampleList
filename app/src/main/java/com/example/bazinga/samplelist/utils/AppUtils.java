@@ -70,14 +70,16 @@ public class AppUtils {
 
                 }
             }
-            if (hideSystemApps && applicationInfo != null) {
-                if ((ApplicationInfo.FLAG_SYSTEM & applicationInfo.flags) == 0) {
+
+            if (applicationInfo != null) {
+                 if ((ApplicationInfo.FLAG_SYSTEM & applicationInfo.flags) == 0) {
                     // add only if not system app.
-                    launcherApps.add(appInfo);
+                    appInfo.setIsSystemApp(false);
+                } else {
+                    appInfo.setIsSystemApp(true);
                 }
-            } else {
-                launcherApps.add(appInfo);
             }
+            launcherApps.add(appInfo);
 
         }
         sortList(launcherApps);

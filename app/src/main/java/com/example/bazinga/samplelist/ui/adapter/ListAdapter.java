@@ -24,8 +24,6 @@ import android.widget.Toast;
 import com.example.bazinga.samplelist.R;
 import com.example.bazinga.samplelist.model.AppListData;
 
-import org.w3c.dom.Text;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -49,6 +47,7 @@ public class ListAdapter extends BaseAdapter implements SectionIndexer {
     private int[] mPositionToSectionIndex;
     private SectionInfo[] mSections = EMPTY_SECTIONS;
     private ArrayList<Integer> mPositionToSectionIndexList;
+    private boolean mShowSystemApps;
 
     public static final String TAG = "ListAdapter";
 
@@ -108,20 +107,21 @@ public class ListAdapter extends BaseAdapter implements SectionIndexer {
 
     @Override
     public Object[] getSections() {
-          return mSections;
+        return mSections;
     }
 
     @Override
     public int getPositionForSection(int sectionIndex) {
-        Log.d(TAG, "getPositionForSection : sectionIndex : " + sectionIndex + " : getPositionForSection : " + mSections[sectionIndex].position);
-     return 0;
-        //return mSections[sectionIndex].position;
+        //Log.d(TAG, "getPositionForSection : sectionIndex : " + sectionIndex + " : getPositionForSection : " + mSections[sectionIndex].position);
+        return mSections[sectionIndex].position;
     }
 
     @Override
     public int getSectionForPosition(int position) {
         //Log.d(TAG, "getSectionForPosition : position " + position + " :: " + mAppAndSectionList.get(position).appName + " :: " + mPositionToSectionIndexList.get(position));
-        return 0;
+        // If constant value is returned the fast scroller will behave weirdly like going beyond the screen
+        // or moving haphazardly while scrolling the list.
+        return mPositionToSectionIndexList.get(position);
     }
 
     @Override
@@ -214,10 +214,13 @@ public class ListAdapter extends BaseAdapter implements SectionIndexer {
             ArrayList<SectionInfo> sections = new ArrayList<>();
             int lastSecId = -1;
             int totalEntries = mAppList.size();
-            mPositionToSectionIndex = new int[totalEntries];
+            //mPositionToSectionIndex = new int[totalEntries];
 
             for (int pos = 0; pos < totalEntries; pos++) {
                 AppListData appListData = mAppList.get(pos);
+                if (!mShowSystemApps && appListData.getIsSystemApp()) {
+                    continue;
+                }
                 String label = appListData.appName;
                 int secId = mIndex.getBucketIndex(TextUtils.isEmpty(label) ? "" : label);
 //                Log.d(TAG, "[" + pos + "]sId = " + secId
@@ -233,7 +236,7 @@ public class ListAdapter extends BaseAdapter implements SectionIndexer {
                 }
                 mAppAndSectionList.add(appListData);
                 mPositionToSectionIndexList.add(sections.size() - 1);
-                mPositionToSectionIndex[pos] = sections.size() - 1;
+                //mPositionToSectionIndex[pos] = sections.size() - 1;
             }
             mSections = sections.toArray(EMPTY_SECTIONS);
 //            for (int i = 0; i < mSections.length; i++) {
@@ -317,5 +320,9 @@ public class ListAdapter extends BaseAdapter implements SectionIndexer {
             e.printStackTrace();
         }
 
+    }
+
+    public void setSystemAppsVisibility(boolean showSystemApps) {
+        mShowSystemApps = showSystemApps;
     }
 }

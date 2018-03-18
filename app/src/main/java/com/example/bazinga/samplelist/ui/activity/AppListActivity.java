@@ -73,10 +73,17 @@ public class AppListActivity extends ListActivity {
         loadAppList(false);
         registerForContextMenu(mListView);
 
+        mHeaderView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mHideSystemAppSwitch.setChecked(!mHideSystemAppSwitch.isChecked());
+            }
+        });
+
         mHideSystemAppSwitch.setOnCheckedChangeListener(new Switch.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                loadAppList(isChecked);
+                updateListView();
                 if (isChecked) {
                     mHeaderViewSummary.setText("System apps are hidden.");
                 } else {
@@ -187,11 +194,16 @@ public class AppListActivity extends ListActivity {
             super.onPostExecute(aVoid);
             if (null != mAppList)
                 Log.d("ABHI", "mAppList.size() : " + mAppList.size());
-            mAppListAdapter.setList(mAppList);
-            setListAdapter(mAppListAdapter);
-            mAppListAdapter.notifyDataSetChanged();
+            updateListView();
             hideProgressDialog();
         }
+    }
+
+    private void updateListView() {
+        mAppListAdapter.setSystemAppsVisibility(!mHideSystemAppSwitch.isChecked());
+        mAppListAdapter.setList(mAppList);
+        setListAdapter(mAppListAdapter);
+        mAppListAdapter.notifyDataSetChanged();
     }
 
     private void showProgressDialog() {

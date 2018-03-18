@@ -11,7 +11,8 @@ public class AppListData {
     public String appSummary;
     public Drawable appIcon;
     public String appActivity;
-    public boolean isSectionHeader;
+    private boolean isSectionHeader;
+    private boolean isSystemApp;
     public String installLocation;
 
     public void setIsSectionHeader(boolean isSectionHeader) {
@@ -20,5 +21,13 @@ public class AppListData {
 
     public boolean getIsSectionHeader() {
         return isSectionHeader;
+    }
+
+    public boolean getIsSystemApp() {
+        return isSystemApp;
+    }
+
+    public void setIsSystemApp(boolean isSystemApp) {
+        this.isSystemApp = isSystemApp;
     }
 }
